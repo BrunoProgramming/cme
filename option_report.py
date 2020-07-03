@@ -13,6 +13,7 @@ import mysql.connector as mysql
 
 def main(args):
     report_date = datetime.strptime(args.date, '%Y%m%d')
+    exercise_date = datetime.strptime(args.exercise, '%Y%m') if args.exercise else None
     product = args.product
     curr_price = int(args.price)
     print("Process {} {}".format(product, report_date))
@@ -26,8 +27,8 @@ def main(args):
 
     cursor = db.cursor()
     report_weekday = report_date.weekday()
-    report_date_start =  report_date-timedelta(days=5 if report_weekday==4 else (6 if report_weekday==5 or report_weekday==3 else 7))
-    query = "SELECT IsCall, ExerciseDate, Date, Strike, AtClose FROM options_{} WHERE Date>'{}' AND Date<='{}' ORDER BY ExerciseDate ASC, IsCall DESC, Date ASC, Strike ASC".format(product, report_date_start.strftime("%Y-%m-%d"), report_date.strftime("%Y-%m-%d"))
+    report_date_start =  report_date-timedelta(days=5 if report_weekday==5 else (6 if report_weekday==6 or report_weekday==4 else 7))
+    query = "SELECT IsCall, ExerciseDate, Date, Strike, AtClose FROM options_{} WHERE Date>'{}' AND Date<='{}' {} ORDER BY ExerciseDate ASC, IsCall DESC, Date ASC, Strike ASC".format(product, report_date_start.strftime("%Y-%m-%d"), report_date.strftime("%Y-%m-%d"), "AND ExerciseDate>'{}'".format(exercise_date.strftime("%Y-%m-%d")) if exercise_date else "")
     cursor.execute(query)
     records = cursor.fetchall()
     data = []
@@ -153,10 +154,11 @@ def main(args):
 
         plt.xlabel('Strikes')
         plt.ylabel('Interests')
-        plt.title('Options of {} {} {}'.format(product, exercise_date.strftime("%m"), "Puts" if is_call==0 else "Calls"))
+        plt.title('Options of {} {} {}'.format(product, exercise_date.strftime("%y-%m"), "Puts" if is_call==0 else "Calls"))
         plt.xticks(index + bar_width, strikes, rotation=90, fontsize=6)
         plt.legend()
         plt.tight_layout()
+        plt.grid(alpha=0.1)
         #plt.switch_backend('TkAgg')
         #plt.switch_backend('wxAgg')
         #plt.switch_backend('QT4Agg')
@@ -173,6 +175,7 @@ if __name__ == "__main__":
     parser.add_argument("--date", type=str, help="report date")
     parser.add_argument("--product", type=str, help="option product")
     parser.add_argument("--price", type=str, help="current price")
+    parser.add_argument("--exercise", type=str, help="exercise date")
     args = parser.parse_args()
 
     main(args)
