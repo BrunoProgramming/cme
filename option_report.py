@@ -150,11 +150,11 @@ def main(args):
             #print(strikes[i], strike_dates[i])
             strike_dates[i] = (strikes[i], strike_dates[i][-1] - strike_dates[i][-2])
         strike_dates.sort(key=lambda x : abs(x[1]), reverse=True)
-        print(product, exercise_date.strftime("%m"), "Puts" if is_call==0 else "Calls", strike_dates[:5])
+        print(product, exercise_date.strftime("%Y-%m"), "Puts" if is_call==0 else "Calls", strike_dates[:5])
 
         plt.xlabel('Strikes')
         plt.ylabel('Interests')
-        plt.title('Options of {} {} {}'.format(product, exercise_date.strftime("%y-%m"), "Puts" if is_call==0 else "Calls"))
+        plt.title('Options of {} {} {}'.format(product, exercise_date.strftime("%Y-%m"), "Puts" if is_call==0 else "Calls"))
         plt.xticks(index + bar_width, strikes, rotation=90, fontsize=6)
         plt.legend()
         plt.tight_layout()
