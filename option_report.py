@@ -13,7 +13,7 @@ import mysql.connector as mysql
 
 def main(args):
     report_date = datetime.strptime(args.date, '%Y%m%d')
-    exercise_date = datetime.strptime(args.exercise, '%Y%m') if args.exercise else None
+    exercise_date = datetime.strptime(args.exercise, '%Y%m%d') if args.exercise else None
     product = args.product
     curr_price = int(args.price)
     print("Process {} {}".format(product, report_date))
